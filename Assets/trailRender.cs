@@ -8,22 +8,33 @@ public class trailRender : MonoBehaviour {
 	RaycastHit hit;
 	bool check = true;
 	TrailRenderer trail;
+    GameObject gameManager;
+    GameManager scriptGM;
+
 	// Use this for initialization
 	void Start () {
 		trail = GetComponent<TrailRenderer>();
+        scriptGM = GetComponent<GameManager>();
+        hit = GetComponent<RaycastHit>();
+        
+        vertex = new List<Vector3>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		vertex.Add(trail.GetPosition(trail.positionCount));
-		checkCollision();
-	}
+        if(trail.positionCount > 0)
+        {
+            vertex.Add(trail.GetPosition(trail.positionCount - 1));
+		    checkCollision();
+        }
+
+    }
 	void checkCollision(){
 		for (int i = 1; i < vertex.Count; i++) {
 			if (Physics.Linecast(vertex [i - 1], vertex [i], out hit)) {
-				//if (WheelHit.collider.GetType () != typeof(CharacterController) && check) {
-					Debug.Log("touche");
-				//}
+				if (hit.collider.GetType () != typeof(CharacterController) && check) {
+                    scriptGM.updateScore(hit.collider.gameObject);
+				}
 			}
 		}
 		
